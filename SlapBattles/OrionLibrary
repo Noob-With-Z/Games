@@ -1,3 +1,5 @@
+-- This is a repost from the Orion Library but modded
+
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -458,7 +460,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	if WindowConfig.IntroEnabled == nil then
 		WindowConfig.IntroEnabled = true
 	end
-	WindowConfig.IntroToggleIcon = WindowConfig.IntroToggleIcon or "rbxassetid://8834748103"
+	WindowConfig.ToggleIcon = WindowConfig.ToggleIcon or "rbxassetid://8834748103"
 	WindowConfig.IntroText = WindowConfig.IntroText or "Orion Library"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
@@ -629,7 +631,7 @@ function OrionLib:MakeWindow(WindowConfig)
 		BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Main,
 		Visible = false
 	}), {
-		AddThemeObject(SetProps(MakeElement("Image", WindowConfig.IntroToggleIcon or "http://www.roblox.com/asset/?id=8834748103"), {
+		AddThemeObject(SetProps(MakeElement("Image", WindowConfig.ToggleIcon), {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.new(0.5, 0, 0.5, 0),
 			Size = UDim2.new(0.7, 0, 0.7, 0),
@@ -1769,25 +1771,9 @@ local function CreateTween(instance, prop, value, time, tweenWait)
 	end
 end
 
-local ScreenGui = Create("ScreenGui", Orion)
-
-local Menu_Notifi = Create("Frame", ScreenGui, {
-	Size = UDim2.new(0, 300, 1, 0),
-	Position = UDim2.new(1, 0, 0, 0),
-	AnchorPoint = Vector2.new(1, 0),
-	BackgroundTransparency = 1
-})
-
-local Padding = Create("UIPadding", Menu_Notifi, {
-	PaddingLeft = UDim.new(0, 25),
-	PaddingTop = UDim.new(0, 25),
-	PaddingBottom = UDim.new(0, 50)
-})
-
-local ListLayout = Create("UIListLayout", Menu_Notifi, {
-	Padding = UDim.new(0, 15),
-	VerticalAlignment = "Bottom"
-})
+function orionLib:GetFlags()
+	return OrionLib.Flags
+end
 
 function OrionLib:Destroy()
 	Orion:Destroy()
