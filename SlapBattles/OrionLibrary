@@ -1771,8 +1771,24 @@ local function CreateTween(instance, prop, value, time, tweenWait)
 	end
 end
 
-function orionLib:GetFlags()
+function OrionLib:GetFlags()
 	return OrionLib.Flags
+end
+
+function OrionLib:UpdateFlags(data)
+	if data then
+		for FlagName, Value in pairs(data) do
+			local Flag = OrionLib.Flags[FlagName]
+
+			if Flag then
+				if Flag.Type == "Colorpicker" then
+					Flag:Set(UnpackColor(Value))
+				else
+					Flag:Set(Value)
+				end  
+			end
+		end
+	end
 end
 
 function OrionLib:Destroy()
