@@ -786,5 +786,42 @@ Now that you know the basic difference, look back at the examples and ask yourse
 * What happens if the hook returns a value instead?
 
 Once these questions start making sense, `__namecall` and `__index` become much less mysterious.
+## Now... `checkcaller`? What Is That?
+
+You may have noticed that we used `checkcaller()` in the previous examples.
+
+So... what exactly is it?
+
+`checkcaller` is an executor-provided function commonly used to determine whether the currently intercepted call originated from the executor/script environment or from the Roblox environment.
+
+In its simplest form:
+
+```lua
+if checkcaller() then
+    -- Called from the executor/script side
+else
+    -- Called from the Roblox side
+end
+```
+
+This becomes particularly useful when working with hooks.
+
+For example, when a metamethod is hooked, you may not always want your custom logic to affect calls made by your own script. You may only want to react to calls originating from the game itself.
+
+That's where `checkcaller()` can be useful.
+
+```lua
+if not checkcaller() then
+    -- Handle calls originating outside the executor context
+end
+```
+
+We'll go into exactly how `checkcaller` behaves, what it returns, and why it is commonly used alongside hooks in a later section.
+
+For now, the important thing to remember is:
+
+> **`checkcaller()` is commonly used to distinguish calls made by the executor/script context from calls originating from the Roblox context.**
+
+> **Note:** `checkcaller` is not part of the standard Roblox API. It is an executor-provided API, and its exact behavior may vary between implementations.
 
 ---
