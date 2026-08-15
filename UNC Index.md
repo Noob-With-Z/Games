@@ -569,4 +569,222 @@ __index
 
 These concepts are more advanced than the interaction APIs above, so it is useful to understand Lua/Luau functions, metatables, and metamethods before diving into them.
 
+### Differences Between `__namecall` and `__index`
+
+If you've ever looked into `hookmetamethod`, you've probably seen these two metamethods mentioned:
+
+* `__namecall`
+* `__index`
+
+They are both commonly used when hooking Roblox object behavior, but they serve very different purposes.
+
+Instead of overcomplicating the explanation, let's look at some examples first.
+
+---
+
+### `__namecall`
+
+`__namecall` is associated with method calls using the `:` syntax.
+
+For example:
+
+```lua
+game.Players.LocalPlayer:Kick()
+```
+
+A hook can intercept the method call and inspect which method was requested:
+
+```lua
+local oldNamecall
+
+oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+    if not checkcaller() then
+        local method = getnamecallmethod()
+
+        if self == LocalPlayer and method == "Kick" then
+            return
+        end
+    end
+
+    return oldNamecall(self, ...)
+end)
+```
+
+In this example, `getnamecallmethod()` is used to determine which method is being called.
+
+The important part is:
+
+```lua
+local method = getnamecallmethod()
+```
+
+If the intercepted operation was:
+
+```lua
+LocalPlayer:Kick()
+```
+
+then the method name would be:
+
+```text
+"Kick"
+```
+
+The hook can then decide whether to allow the original call to continue.
+
+---
+
+### `__index`
+
+`__index` is related to indexing an object to retrieve a value.
+
+For example:
+
+```lua
+local speed = Humanoid.WalkSpeed
+```
+
+The `__index` metamethod can be used to intercept this kind of property access.
+
+A simplified example:
+
+```lua
+local oldIndex
+
+oldIndex = hookmetamethod(game, "__index", function(self, property)
+    if not checkcaller() then
+        if self:IsA("Humanoid")
+            and self:IsDescendantOf(LocalPlayer.Character)
+            and property == "WalkSpeed" then
+
+            return 16
+        end
+
+        if self:IsA("Humanoid")
+            and self:IsDescendantOf(LocalPlayer.Character)
+            and property == "JumpPower" then
+
+            return 50
+        end
+    end
+
+    return oldIndex(self, property)
+end)
+```
+
+Here, the hook checks which property is being accessed.
+
+For example:
+
+```lua
+local speed = Humanoid.WalkSpeed
+```
+
+If the conditions match, the hook can return its own value instead of forwarding the operation to the original `__index`.
+
+---
+
+## So, What's the Difference?
+
+The easiest way to remember it is:
+
+```text
+__namecall
+    ↓
+Method calls
+    ↓
+object:Method(...)
+
+__index
+    ↓
+Index/property access
+    ↓
+object.Property
+object["Property"]
+```
+
+So, conceptually:
+
+> **`__namecall` is concerned with method calls.**
+
+> **`__index` is concerned with retrieving values through indexing.**
+
+For example:
+
+```lua
+LocalPlayer:Kick()
+```
+
+is a method call, making `__namecall` relevant.
+
+While:
+
+```lua
+Humanoid.WalkSpeed
+```
+
+is property access, making `__index` relevant.
+
+---
+
+## What Do They Have in Common?
+
+Both are **metamethods**, meaning they are special methods used by Lua/Luau to customize how certain operations behave.
+
+Both can also be intercepted through `hookmetamethod` in executor environments.
+
+However, they operate at different points:
+
+```text
+                 hookmetamethod
+                       │
+          ┌────────────┴────────────┐
+          ↓                         ↓
+      __namecall                  __index
+          │                         │
+     Method calls              Value access
+          │                         │
+ object:Method()              object.Property
+```
+
+The code structure can therefore look very similar:
+
+```lua
+local oldMethod
+
+oldMethod = hookmetamethod(game, "__namecall", function(self, ...)
+    -- custom logic
+
+    return oldMethod(self, ...)
+end)
+```
+
+and:
+
+```lua
+local oldIndex
+
+oldIndex = hookmetamethod(game, "__index", function(self, property)
+    -- custom logic
+
+    return oldIndex(self, property)
+end)
+```
+
+Notice that both hooks preserve the original behavior by calling the previously stored function when their custom conditions are not met.
+
+---
+
+## A Question to Keep in Mind
+
+Now that you know the basic difference, look back at the examples and ask yourself:
+
+* What changed between the original operation and the hooked operation?
+* Which part of the operation is being intercepted?
+* What information does each hook receive?
+* When should the original behavior still be called?
+* What happens if the hook returns a value instead?
+
+Once these questions start making sense, `__namecall` and `__index` become much less mysterious.
+
 ---
