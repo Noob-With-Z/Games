@@ -824,4 +824,63 @@ For now, the important thing to remember is:
 
 > **Note:** `checkcaller` is not part of the standard Roblox API. It is an executor-provided API, and its exact behavior may vary between implementations.
 
+## `hookfunction`? Isn't That the Same as `hookmetamethod`?
+
+At this point, you might be looking at `hookfunction` and thinking:
+
+> "Wait... isn't this basically the same thing as `hookmetamethod`?"
+
+Not exactly.
+
+Both are used to **intercept or replace existing behavior**, but they operate on different things.
+
+`hookmetamethod` is commonly used to hook a **metamethod** of an object, such as:
+
+```lua
+hookmetamethod(game, "__namecall", newFunction)
+```
+
+or:
+
+```lua
+hookmetamethod(game, "__index", newFunction)
+```
+
+`hookfunction`, on the other hand, is used to hook a **function itself**.
+
+A simplified example looks like this:
+
+```lua
+local oldFunction
+
+oldFunction = hookfunction(someFunction, function(...)
+    print("Function was called!")
+
+    return oldFunction(...)
+end)
+```
+
+Here, `someFunction` is the function being hooked directly.
+
+So the easiest way to think about the difference is:
+
+```text
+hookmetamethod
+    ↓
+Hooks a metamethod
+    ↓
+__namecall / __index / etc.
+
+hookfunction
+    ↓
+Hooks a function
+    ↓
+function(...)
+```
+
+They can sometimes be used to achieve similar results, but the mechanism being intercepted is different.
+
+For example, if you already have a reference to a particular function, `hookfunction` may be the appropriate tool. If you want to intercept a metamethod operation such as a method call or property access, `hookmetamethod` is generally the relevant API.
+
+> **Note:** `hookfunction` is an executor-provided API and is not part of the standard Roblox/Luau API. Its exact behavior and implementation can vary between executor environments.
 ---
