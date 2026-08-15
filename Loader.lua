@@ -58,6 +58,8 @@ isfolder = unc("function", isfolder)
 
 everyClipboard = unc("function", setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set))
 
+getconnections = unc("function", getconnections)
+
 function toClipboard(txt)
     if everyClipboard then
         everyClipboard(tostring(txt))
@@ -138,6 +140,14 @@ task.spawn(function()
             function(Response)
                 if Response == "Check" then
                     StarterGui:SetCore("DevConsoleVisible", true)
+
+                    if getconnections then
+                        local tbox = game:GetService("CoreGui").DevConsoleMaster.DevConsoleWindow.DevConsoleUI.MainView.UtilAndTab.SearchBarFrame.SearchBar.InputField.TextBox
+                        tbox.Text = "NoobZ was here"
+                        if getconnections(tbox.FocusLost) then
+                            firesignal(tbox.FocusLost, true)
+                        end
+                    end
                 end
             end
         )
