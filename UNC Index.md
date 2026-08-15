@@ -2,6 +2,8 @@
 
 > *Note: Some parts of this document may have been poorly translated or written.*
 
+It helped you? Consider leaving a star for this repo and help it reach people who is looking for!
+
 ## What is "UNC"?
 
 **UNC** stands for **Unified Naming Convention**. It is a standard created to make executor-provided APIs more consistent across different environments.
@@ -32,7 +34,7 @@ With that out of the way, let's start with the basics.
 
 ---
 
-# The Beginning
+# 1. The Beginning — Understanding the Default Roblox Environment
 
 Before going deep into executor APIs, we should first understand the environment in which these functions exist.
 
@@ -438,3 +440,30 @@ The important distinction is that these executor functions are **not replacement
 They are executor-provided interfaces for interacting with systems that already exist in the Roblox experience.
 
 Understanding the underlying Roblox API first makes the executor APIs much easier to understand.
+
+
+# 2. The Real Index
+
+## What are we going to learn?
+
+A list of everything we're going to take a look:
+
+```text
+Instance Simulation
+fireproximityprompt, fireclickdetector, firetouchinterest.
+
+Function & Metatable Hooking
+hookmetamethod (__namecall & __index), hookfunction, getnamecallmethod, checkcaller
+```
+
+## 2a. Instance Simulation
+
+### fireproximityprompt
+
+```lua
+fireproximityprompt(ProximityPrompt)
+```
+```text
+Arguments:
+<ProximityPrompt> The ProximityPrompt to be fired.
+```
