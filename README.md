@@ -1,8 +1,8 @@
 # Welcome!
 
-This is where I'm going to post my own scripts! :D
+This is where I'll be posting my own scripts! :D
 
-By the way, the things here are obfuscated, so no free sources, sorry :/
+By the way, the scripts here are obfuscated, so no free source code, sorry! :/
 
 # More From NoobZ!
 
