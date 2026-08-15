@@ -461,6 +461,10 @@ Function & Metatable Hooking
 ├── hookfunction
 ├── getnamecallmethod
 └── checkcaller
+
+Connection Manipulation
+├── getconnections
+└── firesignal
 ```
 
 > **Note:** The APIs documented in this section are executor-provided APIs. They are not part of the standard Roblox API, and their behavior may vary between executor implementations.
@@ -883,4 +887,110 @@ They can sometimes be used to achieve similar results, but the mechanism being i
 For example, if you already have a reference to a particular function, `hookfunction` may be the appropriate tool. If you want to intercept a metamethod operation such as a method call or property access, `hookmetamethod` is generally the relevant API.
 
 > **Note:** `hookfunction` is an executor-provided API and is not part of the standard Roblox/Luau API. Its exact behavior and implementation can vary between executor environments.
+
+## 3a. Connection Manipulation
+
+Now that we've covered `RBXScriptConnection`s, we can finally take a look at APIs that allow us to interact with event connections directly.
+
+Two commonly known functions in executor environments are:
+
+```text id="y8x3cw"
+getconnections
+firesignal
+```
+
+They are related, but they serve different purposes.
+
+* `getconnections` is commonly used to retrieve connections associated with an event.
+* `firesignal` is commonly used to fire an event/signal programmatically.
+
+> **Note:** Neither of these functions is part of the standard Roblox API. They are executor-provided APIs, and their behavior can vary between implementations.
+
+---
+
+### `getconnections`
+
+```lua id="d5v2ck"
+getconnections(Signal)
+```
+
+`getconnections` is commonly used to retrieve the connections associated with an `RBXScriptSignal`.
+
+For example:
+
+```lua id="v3y1cx"
+local connections = getconnections(workspace.Part.Touched)
+
+print(#connections)
+```
+
+The returned value is commonly a table containing information about the connections associated with that signal.
+
+Depending on the executor, connection entries may expose methods or properties that allow you to interact with the connection.
+
+A common example is disconnecting a connection:
+
+```lua id="z4j8pb"
+for _, connection in ipairs(getconnections(workspace.Part.Touched)) do
+    connection:Disconnect()
+end
+```
+
+This demonstrates an important concept: instead of creating a new connection, an executor can expose the existing connections attached to a signal.
+
+> **Compatibility:** The exact structure of the values returned by `getconnections` can differ between executor implementations.
+
+---
+
+### `firesignal`
+
+```lua id="m8c4sy"
+firesignal(Signal, ...)
+```
+
+`firesignal` is commonly used to programmatically fire an `RBXScriptSignal`.
+
+For example:
+
+```lua id="4r5h9x"
+firesignal(workspace.Part.Touched)
+```
+
+Additional arguments can also be supplied:
+
+```lua id="8n1j7c"
+firesignal(SomeSignal, argument1, argument2)
+```
+
+The exact arguments expected by a signal depend on the event being fired and on the executor's implementation of `firesignal`.
+
+It is important to understand that firing a signal this way is different from causing the underlying Roblox event condition to naturally occur.
+
+For example, firing a touch-related signal does not necessarily mean that the physics engine actually detected a physical touch.
+
+---
+
+## `getconnections` vs. `firesignal`
+
+The easiest way to remember the difference is:
+
+```text id="9h2k4w"
+getconnections
+      ↓
+Inspect / interact with existing connections
+      ↓
+RBXScriptSignal
+      ↓
+firesignal
+      ↓
+Trigger the signal programmatically
+```
+
+In other words:
+
+> **`getconnections` is about the connections attached to a signal.**
+
+> **`firesignal` is about firing the signal itself.**
+
+These APIs become particularly interesting when combined with what we learned earlier about `RBXScriptSignal`s and `RBXScriptConnection`s.
 ---
