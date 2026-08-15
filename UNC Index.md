@@ -1,8 +1,8 @@
 # UNC Index
 
 > *Note: Some parts of this document may have been poorly translated or written.*
-
-It helped you? Consider leaving a star for this repo and help it reach people who is looking for!
+> 
+Did this help you? Consider leaving a ⭐ on this repo to help it reach more people who are looking for this kind of information!
 
 ## What is "UNC"?
 
