@@ -446,24 +446,127 @@ Understanding the underlying Roblox API first makes the executor APIs much easie
 
 ## What are we going to learn?
 
-A list of everything we're going to take a look:
+Here's a list of the APIs and concepts we're going to take a look at:
 
 ```text
-Instance Simulation
-fireproximityprompt, fireclickdetector, firetouchinterest.
+Interaction Simulation
+├── fireproximityprompt
+├── fireclickdetector
+└── firetouchinterest
 
 Function & Metatable Hooking
-hookmetamethod (__namecall & __index), hookfunction, getnamecallmethod, checkcaller
+├── hookmetamethod
+│   ├── __namecall
+│   └── __index
+├── hookfunction
+├── getnamecallmethod
+└── checkcaller
 ```
 
-## 2a. Instance Simulation
+> **Note:** The APIs documented in this section are executor-provided APIs. They are not part of the standard Roblox API, and their behavior may vary between executor implementations.
 
-### fireproximityprompt
+---
+
+## 2a. Interaction Simulation
+
+This section covers APIs commonly used to programmatically trigger or simulate interactions with Roblox objects and systems.
+
+### `fireproximityprompt`
 
 ```lua
 fireproximityprompt(ProximityPrompt)
 ```
+
+**Arguments:**
+
 ```text
-Arguments:
-<ProximityPrompt> The ProximityPrompt to be fired.
+<ProximityPrompt> The ProximityPrompt to trigger.
 ```
+
+This API is commonly used to programmatically trigger a `ProximityPrompt`.
+
+**Return value:** Executor-dependent.
+
+---
+
+### `fireclickdetector`
+
+```lua
+fireclickdetector(ClickDetector)
+```
+
+**Arguments:**
+
+```text
+<ClickDetector> The ClickDetector to trigger.
+```
+
+This API is commonly used to programmatically trigger a `ClickDetector`.
+
+**Return value:** Executor-dependent.
+
+---
+
+### `firetouchinterest`
+
+```lua
+firetouchinterest(TouchPart, TouchTarget, State)
+```
+
+**Arguments:**
+
+```text
+<TouchPart> The BasePart containing the touch-related functionality.
+<TouchTarget> The BasePart to interact with.
+<State> 0 to begin the touch and 1 to end the touch.
+```
+
+Unlike `fireclickdetector` and `fireproximityprompt`, `firetouchinterest` works with the Roblox touch system rather than an explicit interaction object such as a `ClickDetector` or `ProximityPrompt`.
+
+A common pattern is to begin a touch and then end it:
+
+```lua
+firetouchinterest(TouchPart, TouchTarget, 0)
+task.wait()
+firetouchinterest(TouchPart, TouchTarget, 1)
+```
+
+This can also be wrapped in a helper function:
+
+```lua
+local function touch(touchPart, touchTarget)
+    if touchPart and touchTarget then
+        firetouchinterest(touchPart, touchTarget, 0)
+        task.wait()
+        firetouchinterest(touchPart, touchTarget, 1)
+    end
+end
+```
+
+> **Compatibility note:** `firetouchinterest` is executor-specific, so the exact behavior and supported arguments may differ between environments.
+
+---
+
+## 2b. Function & Metatable Hooking
+
+This section covers APIs used to intercept, replace, or inspect function calls and metamethod operations.
+
+The main APIs we'll look at are:
+
+```text
+hookmetamethod
+hookfunction
+getnamecallmethod
+checkcaller
+```
+
+We'll also cover the two metamethods that are especially relevant when working with `hookmetamethod`:
+
+```text
+__namecall
+__index
+```
+
+These concepts are more advanced than the interaction APIs above, so it is useful to understand Lua/Luau functions, metatables, and metamethods before diving into them.
+
+---
