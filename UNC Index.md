@@ -269,3 +269,172 @@ So, in short:
 > **RemoteFunctions** are for requesting something and receiving a response.
 
 Once you understand these two, a lot of Roblox's client-server architecture starts making much more sense.
+
+# ClickDetectors, ProximityPrompts & TouchInterests
+
+## What are they?
+
+Before looking at executor APIs such as `fireclickdetector`, `fireproximityprompt`, and `firetouchinterest`, we should understand the Roblox objects and systems they interact with.
+
+These three mechanisms are commonly used to make objects in an experience interactable:
+
+| Object / System   | Main purpose                                  |
+| ----------------- | --------------------------------------------- |
+| `ClickDetector`   | Interaction by clicking an object             |
+| `ProximityPrompt` | Interaction when the player is near an object |
+| Touch interaction | Interaction caused by physical contact        |
+
+Although they can all be used to trigger interactions, they work in different ways.
+
+---
+
+## ClickDetectors
+
+A `ClickDetector` allows a player to interact with a `BasePart` by clicking it.
+
+For example:
+
+```lua
+local clickDetector = workspace.Part.ClickDetector
+
+clickDetector.MouseClick:Connect(function(player)
+    print(player.Name .. " clicked the part!")
+end)
+```
+
+The `MouseClick` event provides the `Player` who performed the interaction.
+
+A `ClickDetector` can also detect different mouse interactions, such as:
+
+* `MouseClick`
+* `RightMouseClick`
+* `MouseHoverEnter`
+* `MouseHoverLeave`
+* `MouseButton1Down`
+* `MouseButton1Up`
+* `MouseButton2Down`
+* `MouseButton2Up`
+
+### Executor Interaction
+
+Some executor environments provide an API commonly known as:
+
+```lua
+fireclickdetector(clickDetector)
+```
+
+The purpose of this function is to simulate the interaction associated with a `ClickDetector`.
+
+> **Note:** `fireclickdetector` is not a standard Roblox API. It is an executor-provided function.
+
+---
+
+## ProximityPrompts
+
+A `ProximityPrompt` provides an interaction that can be triggered when a player gets close enough to an object.
+
+For example:
+
+```lua
+local prompt = workspace.Part.ProximityPrompt
+
+prompt.Triggered:Connect(function(player)
+    print(player.Name .. " triggered the prompt!")
+end)
+```
+
+A prompt can display information such as:
+
+* An action name
+* A keyboard/gamepad input
+* A hold duration
+* A maximum activation distance
+
+For example, a prompt could display:
+
+```text
+[E] Open Door
+```
+
+When the player activates it, the `Triggered` event fires.
+
+### Executor Interaction
+
+Executor environments may provide:
+
+```lua
+fireproximityprompt(prompt)
+```
+
+This function is commonly used to trigger a `ProximityPrompt` programmatically.
+
+> **Note:** `fireproximityprompt` is not part of the standard Roblox API.
+
+---
+
+## Touch Interactions
+
+Touch interactions are different from the previous two.
+
+Instead of explicitly clicking or activating something, a touch interaction occurs when physical parts come into contact.
+
+Roblox provides events such as:
+
+```lua
+local part = workspace.Part
+
+part.Touched:Connect(function(otherPart)
+    print("Touched by:", otherPart:GetFullName())
+end)
+```
+
+There is also:
+
+```lua
+part.TouchEnded
+```
+
+which fires when the touching relationship ends.
+
+A common example would be a kill brick:
+
+```lua
+local part = workspace.KillBrick
+
+part.Touched:Connect(function(hit)
+    local character = hit.Parent
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+    if humanoid then
+        humanoid.Health = 0
+    end
+end)
+```
+
+### Executor Interaction
+
+Some executor environments expose a function commonly known as:
+
+```lua
+firetouchinterest(part1, part2, state)
+```
+
+This is intended to simulate or manipulate a touch interaction between two parts.
+
+The exact behavior and supported arguments can vary between executor implementations, so this is one of the APIs where checking the specific environment is important.
+
+---
+
+## Comparing the Three
+
+| Mechanism         | Interaction      | Common Roblox event      | Common executor API   |
+| ----------------- | ---------------- | ------------------------ | --------------------- |
+| `ClickDetector`   | Mouse click      | `MouseClick`             | `fireclickdetector`   |
+| `ProximityPrompt` | Proximity/input  | `Triggered`              | `fireproximityprompt` |
+| Touch             | Physical contact | `Touched` / `TouchEnded` | `firetouchinterest`   |
+
+The important distinction is that these executor functions are **not replacements for the Roblox objects themselves**.
+
+They are executor-provided interfaces for interacting with systems that already exist in the Roblox experience.
+
+Understanding the underlying Roblox API first makes the executor APIs much easier to understand.
