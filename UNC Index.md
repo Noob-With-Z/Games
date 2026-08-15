@@ -131,3 +131,141 @@ This distinction is important when working with Roblox events.
 And with that, we have the basic idea behind **RBXScriptSignals, RBXScriptConnections, and callbacks**.
 
 Now we can move on to the more interesting part: understanding the executor APIs that UNC attempts to standardize.
+
+# RemoteEvents and RemoteFunctions
+
+## What are RemoteEvents and RemoteFunctions?
+
+`RemoteEvent` and `RemoteFunction` are Roblox `Instance` classes commonly used for communication between the **client and the server**.
+
+They allow code running on the client and server to communicate with each other:
+
+```text
+Client <--------> Server
+```
+
+You may be wondering:
+
+> "Why are we talking about this? They don't seem particularly useful or interesting."
+
+Well... not quite.
+
+This topic is actually more interesting than you might think.
+
+Understanding how these objects work is important because they are commonly used for client-server communication. Later on, we'll also see how they can be inspected and interacted with using executor APIs.
+
+But that's a topic for later — we're still a little early for that.
+
+For now, let's focus on the differences between `RemoteEvents` and `RemoteFunctions`.
+
+---
+
+## RemoteEvents
+
+A `RemoteEvent` is used for **one-way communication**. It sends information to the other side without waiting for a return value.
+
+### Client → Server
+
+The client can fire a `RemoteEvent` using:
+
+```lua
+RemoteEvent:FireServer(Args)
+```
+
+On the server, the corresponding event can be handled using `OnServerEvent`.
+
+### Server → Client
+
+The server can communicate with a specific client using:
+
+```lua
+RemoteEvent:FireClient(Player, Args)
+```
+
+`Player` determines which client should receive the event.
+
+For example, this can be useful when an effect should only happen for one player, such as a client-side cutscene.
+
+The server can also send the event to **every player** using:
+
+```lua
+RemoteEvent:FireAllClients(Args)
+```
+
+This sends the event to every connected player.
+
+Unlike `RemoteFunctions`, `RemoteEvents` do **not** return a value to the caller. They simply fire the corresponding event and pass the provided arguments to the receiving side.
+
+---
+
+## RemoteFunctions
+
+`RemoteFunctions` are slightly different.
+
+They are used for **request-and-response communication**, meaning the caller can invoke a function and receive a return value.
+
+### Client → Server
+
+The client can invoke a `RemoteFunction` using:
+
+```lua
+local result = RemoteFunction:InvokeServer(Args)
+```
+
+The server handles this through `OnServerInvoke` and can return a value:
+
+```lua
+RemoteFunction.OnServerInvoke = function(Player, Args)
+    return "Hello from the server!"
+end
+```
+
+The returned value is then received by the client:
+
+```lua
+local result = RemoteFunction:InvokeServer(Args)
+
+print(result)
+-- Hello from the server!
+```
+
+### Server → Client
+
+The server can also invoke a `RemoteFunction` on a specific client:
+
+```lua
+local result = RemoteFunction:InvokeClient(Player, Args)
+```
+
+The client handles this through `OnClientInvoke`:
+
+```lua
+RemoteFunction.OnClientInvoke = function(Args)
+    return "Hello from the client!"
+end
+```
+
+The important thing to remember is that **`InvokeClient` requires a `Player` argument**. There is no `RemoteFunction:InvokeClient(Args)` form.
+
+---
+
+## RemoteEvent vs. RemoteFunction
+
+The simplest way to remember the difference is:
+
+|                     | `RemoteEvent`                       | `RemoteFunction`   |
+| ------------------- | ----------------------------------- | ------------------ |
+| Client → Server     | `FireServer()`                      | `InvokeServer()`   |
+| Server → Client     | `FireClient()` / `FireAllClients()` | `InvokeClient()`   |
+| Returns a value     | ❌ No                               | ✅ Yes            |
+| Communication style | One-way event                       | Request → response |
+
+One important detail about `RemoteFunctions` is that the invocation **waits for the callback to return**. This makes them useful when the caller actually needs a response from the other side.
+
+So, in short:
+
+> **RemoteEvents** are for sending information without expecting a return value.
+
+> **RemoteFunctions** are for requesting something and receiving a response.
+
+Once you understand these two, a lot of Roblox's client-server architecture starts making much more sense.
