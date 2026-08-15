@@ -25,7 +25,7 @@ function SendNotification(Titles, Texts, Icona, Durationn, Button1s, Button2s, C
             Duration = Durationn,
             Button1 = Button1s,
             Button2 = Button2s,
-            Callback = fu
+            Callback = bf
         })
     end)
 end
