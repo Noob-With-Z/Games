@@ -59,6 +59,7 @@ isfolder = unc("function", isfolder)
 everyClipboard = unc("function", setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set))
 
 getconnections = unc("function", getconnections)
+firesignal = unc("function", firesignal)
 
 function toClipboard(txt)
     if everyClipboard then
