@@ -989,4 +989,5 @@ In other words:
 > **`firesignal` is about firing the signal itself.**
 
 These APIs become particularly interesting when combined with what we learned earlier about `RBXScriptSignal`s and `RBXScriptConnection`s.
+
 ---
