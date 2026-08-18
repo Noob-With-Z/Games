@@ -4,8 +4,6 @@
 > 
 Did this help you? Consider leaving a ⭐ on this repo to help it reach more people who are looking for this kind of information!
 
-[test](##Listening for Property Changes)
-
 ## What is "UNC"?
 
 **UNC** stands for **Unified Naming Convention**. It is a standard created to make executor-provided APIs more consistent across different environments.
