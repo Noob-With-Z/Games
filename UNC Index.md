@@ -818,9 +818,7 @@ if not checkcaller() then
 end
 ```
 
-We'll go into exactly how `checkcaller` behaves, what it returns, and why it is commonly used alongside hooks in a later section.
-
-For now, the important thing to remember is:
+It can be easily understood by:
 
 > **`checkcaller()` is commonly used to distinguish calls made by the executor/script context from calls originating from the Roblox context.**
 
