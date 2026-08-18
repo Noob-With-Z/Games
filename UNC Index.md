@@ -132,8 +132,6 @@ This distinction is important when working with Roblox events.
 
 And with that, we have the basic idea behind **RBXScriptSignals, RBXScriptConnections, and callbacks**.
 
-Now we can move on to the more interesting part: understanding the executor APIs that UNC attempts to standardize.
-
 # RemoteEvents and RemoteFunctions
 
 ## What are RemoteEvents and RemoteFunctions?
