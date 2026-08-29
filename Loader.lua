@@ -144,7 +144,7 @@ task.spawn(function()
                     StarterGui:SetCore("DevConsoleVisible", true)
 
                     if getconnections then
-                        local tbox = game:GetService("CoreGui").DevConsoleMaster.DevConsoleWindow.DevConsoleUI.MainView.UtilAndTab.SearchBarFrame.SearchBar.InputField.TextBox
+                        local tbox = game:GetService("CoreGui"):WaitForChild("DevConsoleMaster", 5):WaitForChild("DevConsoleWindow", 5).DevConsoleUI.MainView.UtilAndTab.SearchBarFrame.SearchBar.InputField.TextBox
                         tbox.Text = "NoobZ was here"
                         if getconnections(tbox.FocusLost) then
                             firesignal(tbox.FocusLost, true)
