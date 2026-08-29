@@ -85,6 +85,7 @@ local Repository = "Games"
 
 local Games = {
     [142823291] = "Z/mm2.lua", -- Murder Mystery 2
+    [6839171747] = "Z/Doors.lua", -- Doors
 }
 
 function GetScript()
