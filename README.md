@@ -2,7 +2,7 @@
 
 This is where I'll be posting my own scripts! :D
 
-By the way, the scripts here are obfuscated, so no free source code, sorry! :/
+By the way, the scripts here are obfuscated, so no free source code, sorry! :/ (maybe at Open-source)
 
 # More From NoobZ!
 
