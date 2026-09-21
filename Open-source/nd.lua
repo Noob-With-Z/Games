@@ -27,9 +27,12 @@ fireproximityprompt = missing("function", fireproximityprompt)
 firetouchinterest = missing("function", firetouchinterest)
 
 sethiddenproperty = missing("function", sethiddenproperty or set_hidden_property or set_hidden_prop, function(obj, prop, val)
-	pcall(function()
+	local _s, _e = pcall(function()
 		obj[prop] = val
 	end)
+	if not _s then
+		warn("Failed to set property", prop, "to", val, "on", obj, ":", _e)
+	end
 end)
 
 local Players = cloneref(game:GetService("Players"))
@@ -103,7 +106,7 @@ end, function()
 end)
 
 if IsMobile then
-	___size = UDim2.new(0, 532, 0.7, 0)
+	___size = UDim2.new(0, 532, 0.75, 0)
 else
 	___size = UDim2.new(0, 532, 0.45, 0)
 end
@@ -214,25 +217,11 @@ ConnectEvent(RunService.Heartbeat, "Heartbeat", function()
 	
 	print("heartbeat . . .")
 	
-	local _s, _e = pcall(function()
-		sethiddenproperty(
-			plr,
-			"SimulationRadius",
-			math.huge
-		)
-		print("simulationradius . . .")
-	end)
-	
-	--- fallback
-	if not _s then
-		sethiddenproperty(
-			game:FindService("Players").LocalPlayer,
-			"SimulationRadius",
-			math.huge
-		)
-		print("sr fallback . . .")
-		warn(_e)
-	end
+	sethiddenproperty(
+		game:FindService("Players").LocalPlayer,
+		"SimulationRadius",
+		math.huge
+	)
 	
 	local s, e = pcall(function()
 		if Settings.R20.AutoRescueAnimals then
