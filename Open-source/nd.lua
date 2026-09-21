@@ -26,7 +26,7 @@ end)
 fireproximityprompt = missing("function", fireproximityprompt)
 firetouchinterest = missing("function", firetouchinterest)
 
-sethiddenproperty = missing("function", sethiddenproperty, function(obj, prop, val)
+sethiddenproperty = missing("function", sethiddenproperty or set_hidden_property or set_hidden_prop, function(obj, prop, val)
 	pcall(function()
 		obj[prop] = val
 	end)
@@ -214,14 +214,25 @@ ConnectEvent(RunService.Heartbeat, "Heartbeat", function()
 	
 	print("heartbeat . . .")
 	
-	pcall(function()
+	local _s, _e = pcall(function()
 		sethiddenproperty(
 			plr,
 			"SimulationRadius",
-			99999
+			math.huge
 		)
 		print("simulationradius . . .")
 	end)
+	
+	--- fallback
+	if not _s then
+		sethiddenproperty(
+			game:FindService("Players").LocalPlayer,
+			"SimulationRadius",
+			math.huge
+		)
+		print("sr fallback . . .")
+		warn(_e)
+	end
 	
 	local s, e = pcall(function()
 		if Settings.R20.AutoRescueAnimals then
