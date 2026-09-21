@@ -84,8 +84,9 @@ local GitHub = "Noob-With-Z"
 local Repository = "Games"
 
 local Games = {
-    [142823291] = "Z/mm2.lua", -- Murder Mystery 2
-    [6839171747] = "Z/Doors.lua", -- Doors
+	[6839171747] = "Z/Doors.lua", -- Doors
+	[142823291] = "Z/mm2.lua", -- Murder Mystery 2
+	[189707] = "Open-source/nd.lua", -- Natural Disaster
 }
 
 function GetScript()
