@@ -211,16 +211,21 @@ ConnectEvent(RunService.Heartbeat, "Heartbeat", function()
 	if not plr or not plr.Parent then
 		return
 	end
+	
+	print("heartbeat . . .")
+	
 	pcall(function()
 		sethiddenproperty(
 			plr,
 			"SimulationRadius",
 			99999
 		)
+		print("simulationradius . . .")
 	end)
 	
-	pcall(function()
+	local s, e = pcall(function()
 		if Settings.R20.AutoRescueAnimals then
+			print("rescueanimal . . .")
 			Touch(workspace:WaitForChild("RescueEventWorld"):WaitForChild("LobbyPen"):WaitForChild("Hitbox"))
 			
 			for _, animal in AnimalsFolder:GetChildren() do
@@ -234,6 +239,7 @@ ConnectEvent(RunService.Heartbeat, "Heartbeat", function()
 		end
 		
 		if Settings.R20.AutoGrabHats then
+			print("grabhats . . .")
 			ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("RescueEvent2026"):FireServer("SetCode", "true")
 			
 			fireproximityprompt(workspace:WaitForChild("RescueEventWorld"):WaitForChild("HatBox"):WaitForChild("Deposite"):FindFirstChildWhichIsA("ProximityPrompt"))
@@ -248,4 +254,8 @@ ConnectEvent(RunService.Heartbeat, "Heartbeat", function()
 			end
 		end
 	end)
+	
+	if not s then
+		warn(e)
+	end
 end)
